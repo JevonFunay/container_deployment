@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventaris Barang</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/app.js" defer></script>
+</head>
+<body>
+    <h1>Inventaris Barang</h1>
+    <h2 id="judul-form">Tambah barang</h2>
+    <form id="form-barang">
+        <fieldset id="input-barang">
+            <label for="nama">Nama</label>
+            <input type="text" id="nama" name="nama" maxlength="100" required>
+
+            <label for="jumlah">Jumlah</label>
+            <input type="number" id="jumlah" name="jumlah" min="0" max="4294967295" step="1" required>
+
+            <label for="lokasi">Lokasi</label>
+            <input type="text" id="lokasi" name="lokasi" maxlength="100" required>
+
+            <p>
+                <button type="submit" id="simpan">Simpan</button>
+                <button type="button" id="batal" hidden>Batal edit</button>
+            </p>
+        </fieldset>
+    </form>
+
+    <p id="pesan" role="status" aria-live="polite"></p>
+
+    <h2>Daftar barang</h2>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nama</th>
+                <th scope="col">Jumlah</th>
+                <th scope="col">Lokasi</th>
+                <th scope="col">Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="daftar-barang"></tbody>
+    </table>
+</body>
+</html>

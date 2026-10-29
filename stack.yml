@@ -1,0 +1,86 @@
+version: "3.8"
+
+services:
+  app:
+    image: ${APP_IMAGE:?Export APP_IMAGE dengan nama image Docker Hub dan tag}
+    ports:
+      - target: 3000
+        published: 80
+        protocol: tcp
+        mode: ingress
+    environment:
+      DB_HOST: db
+      DB_USER: ${DB_USER:-inventaris}
+      DB_PASSWORD: ${DB_PASSWORD:?Isi DB_PASSWORD}
+      DB_NAME: ${DB_NAME:-inventaris}
+    networks:
+      - inventaris
+    deploy:
+      replicas: 3
+      placement:
+        max_replicas_per_node: 2
+      restart_policy:
+        condition: any
+        delay: 5s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+        monitor: 90s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
+        monitor: 90s
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-inventaris}
+      MYSQL_USER: ${DB_USER:-inventaris}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Isi DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Isi MYSQL_ROOT_PASSWORD}
+    configs:
+      - source: schema
+        target: /docker-entrypoint-initdb.d/01-schema.sql
+    volumes:
+      - data_mysql:/var/lib/mysql
+    networks:
+      - inventaris
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          MYSQL_PWD="$${MYSQL_PASSWORD}"
+          mysql --protocol=TCP --host=127.0.0.1
+          --user="$${MYSQL_USER}" --database="$${MYSQL_DATABASE}"
+          --execute="SELECT 1 FROM barang LIMIT 1"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.database == true
+      restart_policy:
+        condition: any
+        delay: 5s
+      update_config:
+        parallelism: 1
+        order: stop-first
+
+networks:
+  inventaris:
+    driver: overlay
+
+volumes:
+  data_mysql:
+    driver: local
+
+configs:
+  schema:
+    file: ./schema.sql
+

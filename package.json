@@ -1,0 +1,21 @@
+{
+  "name": "swarmproject",
+  "version": "1.0.0",
+  "description": "Aplikasi inventaris CRUD sederhana dengan Express dan MySQL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "check": "node --check server.js && node --check public/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "mysql2": "^3.24.6"
+  }
+}
